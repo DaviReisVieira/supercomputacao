@@ -1,1 +1,3 @@
-# supercomputacao
+# SuperComputação
+
+Aluno: Davi Reis
