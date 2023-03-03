@@ -1,18 +1,3 @@
-// Entrada: Um inteiro N representando o número de filmes disponíveis para assistir e N trios de inteiros (H[i], F[i], C[i]), representando a hora de início, a hora de fim e a categoria do i-ésimo filme. Além disso, um inteiro M representando o número de categorias e uma lista de M inteiros representando o número máximo de filmes que podem ser assistidos em cada categoria.
-
-// Saída: Um inteiro representando o número máximo de filmes que podem ser assistidos de acordo com as restrições de horários e número máximo por categoria.
-
-// formato do arquivo 'input.txt':
-// N M
-// M1 M2 ... Mm
-// H1 F1 C1
-// H2 F2 C2
-// ...
-// Hn Fn Cn
-
-// formato do arquivo 'output.txt':
-// X
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
