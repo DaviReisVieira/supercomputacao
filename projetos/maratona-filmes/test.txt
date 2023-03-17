@@ -1,3 +1,3 @@
- g++ -Wall -O3 -g filmes.cpp -o filmes
- ./filmes < input.txt 
+ g++ -Wall -O3 -g gulosa.cpp -o gulosa
+ ./gulosa < input.txt 
  ./generator 100 5
