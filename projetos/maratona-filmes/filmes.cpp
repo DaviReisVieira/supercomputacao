@@ -46,11 +46,36 @@ std::bitset<24> gera_horario(int inicio, int fim) {
 void heuristica_gulosa(vector<Filme> &filmes, vector<Categoria> &categorias, Maratona &maratona) {
     int maximo = 0;
     int size_of_filmes = filmes.size();
-    int size_of_categorias = categorias.size();
 
-    for 
+    for (int i = 0; i < size_of_filmes; i++) {
+        Filme filme = filmes[i];
+        int categoria = filme.categoria;
+        std::bitset<24> horario = filme.horario;
+
+        if (categorias[categoria - 1].quantidade == 0) {
+            continue;
+        }
+
+        if (maratona.disponibilidade == 0) {
+            maratona.disponibilidade = horario;
+            maratona.filmes.push_back(filme);
+            categorias[categoria - 1].quantidade--;
+            maximo++;
+        } else {
+            if ((maratona.disponibilidade & horario) == 0) {
+                maratona.disponibilidade |= horario;
+                maratona.filmes.push_back(filme);
+                categorias[categoria - 1].quantidade--;
+                maximo++;
+            }
+        }
+    }
 
     cout << maximo << endl;
+
+    // for (int i = 0; i < maximo; i++) {
+    //     cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << endl;
+    // }
 }
 
 int main() {
@@ -72,6 +97,8 @@ int main() {
         if (inicio > fim) {
             if (fim == 0){
                 fim = 24;
+            } else if (inicio == -1 || fim == -1) {
+                continue;
             } else {
                 continue;
             }
@@ -88,8 +115,6 @@ int main() {
     }
 
     sort(filmes.begin(), filmes.end(), compara_filme);
-
-    int size_of_filmes = filmes.size();
 
     heuristica_gulosa(filmes, categorias, maratona);
 
