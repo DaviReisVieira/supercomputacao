@@ -5,6 +5,7 @@
 #include <bitset>
 #include <random>
 #include <chrono>
+#include <map>
 
 using namespace std;
 
@@ -75,9 +76,9 @@ void heuristica_gulosa(vector<Filme> &filmes, vector<Categoria> &categorias, Mar
 
     cout << maximo << endl;
 
-    // for (int i = 0; i < maximo; i++) {
-    //     cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << endl;
-    // }
+    for (int i = 0; i < maximo; i++) {
+        cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << endl;
+    }
 }
 
 // Essa implementação consiste na adaptação da heurística gulosa de nosso projeto. A proposta é que você modifique a sua heurística gulosa de modo que ao longo da seleção de um filme você tenha 25% de chance de pegar outro filme qualquer que respeite o horário. Isso fará com que sua heurística tenha um pouco mais de exploration e possamos ter alguns resultados melhores.
@@ -85,7 +86,7 @@ void heuristica_gulosa(vector<Filme> &filmes, vector<Categoria> &categorias, Mar
 int main() {
     int n, m;
     cin >> n >> m;
-    vector<Filme> filmes(n);
+    vector<Filme> filmes;
     vector<Categoria> categorias(m);
     Maratona maratona;
     
@@ -120,14 +121,31 @@ int main() {
 
     sort(filmes.begin(), filmes.end(), compara_filme);
 
+    int size_of_filmes = filmes.size();
+
+    for (int i = 0; i < size_of_filmes; i++) {
+        cout << filmes[i].id << " " << filmes[i].inicio << " " << filmes[i].fim << endl;
+    }
+
     unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine generator (seed);
     std::binomial_distribution<int> distribution (1, 0.75);
     distribution(generator);
 
+    map<int, vector<Filme>> filmes_por_horario;
     
+    for (int i = 0; i < size_of_filmes; i++) {
+        filmes_por_horario[filmes[i].fim].push_back(filmes[i]);
+    }
 
-
+    // print all of files_by_horario
+    // for (auto it = filmes_por_horario.begin(); it != filmes_por_horario.end(); it++) {
+    //     cout << it->first << ": ";
+    //     for (int i = 0; i < it->second.size(); i++) {
+    //         cout << it->second[i].id << " ";
+    //     }
+    //     cout << endl;
+    // }
 
     return 0;
 
