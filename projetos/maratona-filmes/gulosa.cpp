@@ -73,9 +73,9 @@ void heuristica_gulosa(vector<Filme> &filmes, vector<Categoria> &categorias, Mar
 
     cout << maximo << endl;
 
-    // for (int i = 0; i < maximo; i++) {
-    //     cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << endl;
-    // }
+    for (int i = 0; i < maximo; i++) {
+        cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << endl;
+    }
 }
 
 int main() {

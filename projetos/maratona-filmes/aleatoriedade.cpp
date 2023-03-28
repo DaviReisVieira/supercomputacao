@@ -46,42 +46,55 @@ std::bitset<24> gera_horario(int inicio, int fim) {
     return horario;
 }
 
-void heuristica_gulosa(vector<Filme> &filmes, vector<Categoria> &categorias, Maratona &maratona) {
-    int maximo = 0;
-    int size_of_filmes = filmes.size();
 
-    for (int i = 0; i < size_of_filmes; i++) {
-        Filme filme = filmes[i];
-        int categoria = filme.categoria;
-        std::bitset<24> horario = filme.horario;
+void aleatoriedade(vector<Categoria> &categorias, Maratona &maratona, map<int, vector<Filme>> filmes_por_horario){
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::default_random_engine generator (seed);
+    std::binomial_distribution<int> distribution (1, 0.75);
+    distribution(generator);
 
-        if (categorias[categoria - 1].quantidade == 0) {
+    bitset<24> mochila_cheia(0xFFFFFF);
+
+    for (int i = 1; i <= 24; i++){
+        if (maratona.disponibilidade == mochila_cheia){
+            break;
+        }
+
+        if (filmes_por_horario[i].size() == 0){
             continue;
         }
 
-        if (maratona.disponibilidade == 0) {
-            maratona.disponibilidade = horario;
-            maratona.filmes.push_back(filme);
-            categorias[categoria - 1].quantidade--;
-            maximo++;
-        } else {
-            if ((maratona.disponibilidade & horario) == 0) {
-                maratona.disponibilidade |= horario;
-                maratona.filmes.push_back(filme);
-                categorias[categoria - 1].quantidade--;
-                maximo++;
+        vector<Filme> filmes_disponiveis_no_horario;
+
+        for (int j = 0; j < static_cast<int>(filmes_por_horario[i].size()); j++){
+            if ((!(maratona.disponibilidade & filmes_por_horario[i][j].horario).any()) && (categorias[filmes_por_horario[i][j].categoria - 1].quantidade > 0)){
+                filmes_disponiveis_no_horario.push_back(filmes_por_horario[i][j]);
             }
         }
+
+        if (filmes_disponiveis_no_horario.size() == 0){
+            continue;
+        }
+
+        srand(time(NULL));
+        int filme_escolhido = distribution(generator) ? 0 : rand() % filmes_disponiveis_no_horario.size();
+
+        maratona.disponibilidade |= filmes_disponiveis_no_horario[filme_escolhido].horario;
+        maratona.filmes.push_back(filmes_disponiveis_no_horario[filme_escolhido]);
+        categorias[filmes_disponiveis_no_horario[filme_escolhido].categoria - 1].quantidade--;
+        
     }
 
-    cout << maximo << endl;
+    // printa a maratona
+    cout << maratona.filmes.size() << endl;
 
-    for (int i = 0; i < maximo; i++) {
+    for (int i = 0; i < static_cast<int>(maratona.filmes.size()); i++){
         cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << endl;
     }
+
+    cout << endl;
 }
 
-// Essa implementação consiste na adaptação da heurística gulosa de nosso projeto. A proposta é que você modifique a sua heurística gulosa de modo que ao longo da seleção de um filme você tenha 25% de chance de pegar outro filme qualquer que respeite o horário. Isso fará com que sua heurística tenha um pouco mais de exploration e possamos ter alguns resultados melhores.
 
 int main() {
     int n, m;
@@ -123,14 +136,9 @@ int main() {
 
     int size_of_filmes = filmes.size();
 
-    for (int i = 0; i < size_of_filmes; i++) {
-        cout << filmes[i].id << " " << filmes[i].inicio << " " << filmes[i].fim << endl;
-    }
-
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::default_random_engine generator (seed);
-    std::binomial_distribution<int> distribution (1, 0.75);
-    distribution(generator);
+    // for (int i = 0; i < size_of_f    ilmes; i++) {
+    //     cout << filmes[i].id << " " << filmes[i].inicio << " " << filmes[i].fim << endl;
+    // }
 
     map<int, vector<Filme>> filmes_por_horario;
     
@@ -138,14 +146,7 @@ int main() {
         filmes_por_horario[filmes[i].fim].push_back(filmes[i]);
     }
 
-    // print all of files_by_horario
-    // for (auto it = filmes_por_horario.begin(); it != filmes_por_horario.end(); it++) {
-    //     cout << it->first << ": ";
-    //     for (int i = 0; i < it->second.size(); i++) {
-    //         cout << it->second[i].id << " ";
-    //     }
-    //     cout << endl;
-    // }
+    aleatoriedade(categorias, maratona, filmes_por_horario);
 
     return 0;
 
