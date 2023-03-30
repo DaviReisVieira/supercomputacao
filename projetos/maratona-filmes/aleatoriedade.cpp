@@ -85,11 +85,10 @@ void aleatoriedade(vector<Categoria> &categorias, Maratona &maratona, map<int, v
         
     }
 
-    // printa a maratona
     cout << maratona.filmes.size() << endl;
 
     for (int i = 0; i < static_cast<int>(maratona.filmes.size()); i++){
-        cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << endl;
+        cout << maratona.filmes[i].id << " " << maratona.filmes[i].inicio << " " << maratona.filmes[i].fim << " " << maratona.filmes[i].categoria << endl;
     }
 
     cout << endl;
