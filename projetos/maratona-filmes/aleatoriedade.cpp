@@ -64,25 +64,41 @@ void aleatoriedade(vector<Categoria> &categorias, Maratona &maratona, map<int, v
             continue;
         }
 
-        vector<Filme> filmes_disponiveis_no_horario;
+        Filme filme_escolhido;
 
-        for (int j = 0; j < static_cast<int>(filmes_por_horario[i].size()); j++){
-            if ((!(maratona.disponibilidade & filmes_por_horario[i][j].horario).any()) && (categorias[filmes_por_horario[i][j].categoria - 1].quantidade > 0)){
-                filmes_disponiveis_no_horario.push_back(filmes_por_horario[i][j]);
+        srand(time(NULL));
+        if (distribution(generator)){
+            for (int j = 0; j < static_cast<int>(filmes_por_horario[i].size()); j++){
+                if ((!(maratona.disponibilidade & filmes_por_horario[i][j].horario).any()) && (categorias[filmes_por_horario[i][j].categoria - 1].quantidade > 0)){
+                    filme_escolhido = filmes_por_horario[i][j];
+                    break;
+                }
+
+                filme_escolhido.id = -1;
             }
+        } else {
+            vector<Filme> filmes_disponiveis_no_horario;
+
+            for (int j = 1; j < static_cast<int>(filmes_por_horario[i].size()); j++){
+                if ((!(maratona.disponibilidade & filmes_por_horario[i][j].horario).any()) && (categorias[filmes_por_horario[i][j].categoria - 1].quantidade > 0)){
+                    filmes_disponiveis_no_horario.push_back(filmes_por_horario[i][j]);
+                }
+            }
+
+            if (filmes_disponiveis_no_horario.size() == 0){
+                continue;
+            }
+
+            filme_escolhido = filmes_disponiveis_no_horario[rand() % filmes_disponiveis_no_horario.size()];
         }
 
-        if (filmes_disponiveis_no_horario.size() == 0){
+        if (filme_escolhido.id == -1){
             continue;
         }
 
-        srand(time(NULL));
-        int filme_escolhido = distribution(generator) ? 0 : rand() % filmes_disponiveis_no_horario.size();
-
-        maratona.disponibilidade |= filmes_disponiveis_no_horario[filme_escolhido].horario;
-        maratona.filmes.push_back(filmes_disponiveis_no_horario[filme_escolhido]);
-        categorias[filmes_disponiveis_no_horario[filme_escolhido].categoria - 1].quantidade--;
-        
+        maratona.disponibilidade |= filme_escolhido.horario;
+        maratona.filmes.push_back(filme_escolhido);
+        categorias[filme_escolhido.categoria - 1].quantidade--;        
     }
 
     cout << maratona.filmes.size() << endl;
